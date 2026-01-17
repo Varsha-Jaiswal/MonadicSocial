@@ -1,2 +1,16 @@
-# MonadicSocial
-A concurrent social network simulation built in Haskell using Software Transactional Memory (STM). Features a hybrid model with dynamic topology, gossip protocols, and viral trends. Designed with SOLID principles and capability-based effects for high testability and robustness.
+# Monadic Social Network Simulation
+
+A Haskell-based simulation of a social network using STM and Concurrent programming.
+
+## Features
+
+- Dynamic graph topology
+- Gossip protocol
+- Viral trends
+
+## Build
+
+```bash
+stack build
+stack run
+```
