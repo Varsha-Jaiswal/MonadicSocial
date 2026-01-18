@@ -29,6 +29,8 @@ library:
   source-dirs: src
   exposed-modules:
     - Types
+    - Config
+    - Env
 
 executables:
   monadic-social-exe:
