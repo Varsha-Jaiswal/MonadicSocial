@@ -9,7 +9,7 @@ copyright: "2026 Varsha Jaiswal"
 extra-source-files:
   - README.md
 
-  dependencies:
+dependencies:
   - base >= 4.7 && < 5
   - containers
   - stm
@@ -33,6 +33,7 @@ library:
     - Types
     - Config
     - Env
+    - Logger
 
 executables:
   monadic-social-exe:
