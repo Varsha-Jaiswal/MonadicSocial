@@ -41,6 +41,7 @@ library:
     - Capabilities
     - Run
     - UserBehaviour
+    - App
 
 executables:
   monadic-social-exe:
