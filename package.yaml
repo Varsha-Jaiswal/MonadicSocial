@@ -35,6 +35,7 @@ library:
     - Env
     - Logger
     - Capabilities
+    - Run
 
 executables:
   monadic-social-exe:
