@@ -15,6 +15,7 @@ dependencies:
   - stm
   - time
   - mtl
+  - random
 
 ghc-options:
   - -Wall
