@@ -28,6 +28,9 @@ ghc-options:
   - -Wpartial-fields
   - -Wredundant-constraints
 
+default-extensions:
+  - ImportQualifiedPost
+
 library:
   source-dirs: src
   exposed-modules:

@@ -2,9 +2,9 @@ module Run
     ( runSimulation
     ) where
 
-import Control.Monad (forM, unless, forever)
-import Control.Concurrent (threadDelay, forkIO)
+import Control.Concurrent (forkIO, threadDelay)
 import Control.Concurrent.STM (newTQueueIO, newTVarIO, atomically, readTVar)
+import Control.Monad (forM)
 import qualified Data.Map as Map
 import qualified Data.Set as Set
 import Text.Printf (printf)
@@ -32,7 +32,7 @@ runSimulation config = do
     -- 3. Spawn User Threads
     logMsg "Run module: Spawning user threads..."
     forM_ users $ \user -> do
-        forkIO $ userThread env user
+        forkIO $ userThread env user users
     
     logMsg "Run module: Setup complete. Starting Monitor..."
     
