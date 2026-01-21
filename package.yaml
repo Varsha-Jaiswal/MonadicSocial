@@ -37,6 +37,7 @@ library:
     - Logger
     - Capabilities
     - Run
+    - UserBehaviour
 
 executables:
   monadic-social-exe:
