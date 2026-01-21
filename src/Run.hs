@@ -3,7 +3,7 @@ module Run
     ) where
 
 import Control.Monad (forM, unless, forever)
-import Control.Concurrent (threadDelay)
+import Control.Concurrent (threadDelay, forkIO)
 import Control.Concurrent.STM (newTQueueIO, newTVarIO, atomically, readTVar)
 import qualified Data.Map as Map
 import qualified Data.Set as Set
@@ -13,9 +13,9 @@ import Config (Config(..))
 import Env (Env(..))
 import Logger (logMsg)
 import Types (User(..))
+import UserBehaviour (userThread)
 
 -- | Main entry point for the simulation orchestration
--- Updated to include the monitor loop.
 runSimulation :: Config -> IO ()
 runSimulation config = do
     logMsg "Run module: Setting up simulation..."
@@ -29,10 +29,19 @@ runSimulation config = do
     users <- createUsers config
     logMsg $ printf "Created %d users." (length users)
     
+    -- 3. Spawn User Threads
+    logMsg "Run module: Spawning user threads..."
+    forM_ users $ \user -> do
+        forkIO $ userThread env user
+    
     logMsg "Run module: Setup complete. Starting Monitor..."
     
-    -- 3. Start Monitor Loop (Blocking)
+    -- 4. Start Monitor Loop (Blocking)
     monitorLoop env users
+
+-- | Helper for forM_ since we didn't import Data.Foldable or Control.Monad specifically for it
+forM_ :: (Monad m) => [a] -> (a -> m b) -> m ()
+forM_ = flip mapM_
 
 -- | Create users and their channels
 createUsers :: Config -> IO [User]
