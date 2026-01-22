@@ -13,9 +13,10 @@ import Control.Monad.IO.Class (MonadIO, liftIO)
 import Data.Map qualified as Map
 import Data.Set qualified as Set
 import Env (Env (..))
-import Logger (logMsg) -- Still used for setup logging in IO
+import Logger (logMsg)
+import System.Random (randomRIO)
 import Text.Printf (printf)
-import Types (User (..))
+import Types (Personality (..), User (..))
 import UserBehaviour (userThread)
 
 -- | Main entry point for the simulation orchestration
@@ -40,7 +41,6 @@ runSimulation config = do
   logMsg "Run module: Setup complete. Starting Monitor..."
 
   -- 4. Start Monitor Loop (Blocking)
-  -- We run this in AppM to demonstrate capability usage
   runAppM env (monitorLoop env users)
 
 -- | Helper for forM_ since we didn't import Data.Foldable or Control.Monad specifically for it
@@ -60,9 +60,18 @@ createUsers _ = do
     secrets <- newTVarIO Set.empty
     ratings <- newTVarIO []
 
+    -- Randomly assign personality
+    -- We liftIO because newTVarIO etc are in IO (or generalized IO), and randomRIO is IO.
+    -- Since we are in IO do-block, plain randomRIO works.
+    persChance <- randomRIO (1, 100) :: IO Int
+    let personality = case persChance of
+          n | n <= 20 -> Introvert -- 20%
+          n | n <= 90 -> Extrovert -- 70%
+          _ -> Bot -- 10%
     return $
       User
         { userName = name,
+          userPersonality = personality,
           userInboxUrgent = inboxU,
           userInboxNormal = inboxN,
           userMessagesSent = msgSent,
