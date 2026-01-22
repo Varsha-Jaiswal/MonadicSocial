@@ -6,7 +6,8 @@ module App
   )
 where
 
-import Capabilities (MonadLog (..))
+import Capabilities (MonadAtom (..), MonadLog (..))
+import Control.Concurrent.STM (atomically)
 import Control.Monad.Reader (MonadIO, MonadReader, ReaderT, liftIO, runReaderT)
 import Env (Env)
 import Logger qualified
@@ -22,3 +23,6 @@ runAppM env app = runReaderT (unAppM app) env
 
 instance MonadLog AppM where
   logInfo = liftIO . Logger.logMsg
+
+instance MonadAtom AppM where
+  liftAtom = liftIO . atomically
