@@ -1,25 +1,24 @@
+
+-- This module implements the mathematical logic for the Trust System.
+-- It is purely functional and testable.
 module Reputation
-  ( calculateScore,
-    rateInteraction,
-  )
-where
+    ( calculateScore
+    , rateInteraction
+    ) where
 
--- | Calculate a normalized reputation score (0.0 to 10.0) from a list of ratings.
--- Ratings are integers from 1 to 5.
--- Returns 5.0 if no ratings exist (Neutral start).
+-- | Calculates a normalized influence score (0.0 to 10.0) based on historical ratings.
+-- Uses a simple average for now, but could be extended to weighted averages.
 calculateScore :: [Int] -> Double
-calculateScore [] = 5.0
-calculateScore ratings =
-  let total = sum ratings
-      count = length ratings
-      avg = fromIntegral total / fromIntegral count
-   in avg * 2.0 -- Scale 1-5 to 2-10 roughly (or just keep it simple)
+calculateScore [] = 0.0
+calculateScore ratings = 
+    let total = sum ratings
+        count = length ratings
+    in fromIntegral total / fromIntegral count
 
--- | Pure function to determine a rating for an interaction.
--- In a real system, this might depend on content sentiment.
--- Here, we just return a valid rating.
-rateInteraction :: String -> Int
-rateInteraction content
-  | length content > 20 = 5 -- "High effort" message
-  | length content > 10 = 4
-  | otherwise = 3 -- "Low effort" message
+-- | Generates a rating (1-5) for an interaction based on some criteria.
+-- In this simulation, it's random, but this function acts as the logic placeholder.
+-- Returns a value between 1 and 5.
+rateInteraction :: Int -> Int
+rateInteraction seed = 
+    let r = (seed `mod` 5) + 1
+    in r

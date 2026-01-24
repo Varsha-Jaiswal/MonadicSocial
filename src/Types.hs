@@ -1,67 +1,51 @@
-module Types
-  ( User (..),
-    Message (..),
-    MessageType (..),
-    Topic,
-    Personality (..),
-  )
-where
+-- This module defines the fundamental data structures used throughout the application,
+-- including 'User', 'Message', and helper types.
+module Types 
+    ( User(..)
+    , Message(..)
+    , MessageType(..)
+    , Topic
+    , Personality(..)
+    ) where
 
-import Control.Concurrent.STM (TQueue, TVar)
+import Control.Concurrent.STM (TVar, TQueue)
 import Data.Set (Set)
 
--- import Data.Map (Map) -- Will use later for Env
+-- | Defines the behavioral archetype of a user.
+data Personality 
+    = Introvert   -- ^ Prefers not to initiate, longer delays.
+    | Extrovert   -- ^ Highly active, initiates often.
+    | Bot         -- ^ Automated behavior, spams messages.
+    deriving (Show, Eq)
 
+-- | Represents a User in the social network.
+data User = User
+    { userName            :: String           -- ^ The unique name of the user.
+    , userInboxUrgent     :: TQueue Message   -- ^ High-priority messages (Friend Requests).
+    , userInboxNormal     :: TQueue Message   -- ^ Standard messages (Chat).
+    , userMessagesSent    :: TVar Int         -- ^ Counter for total messages sent.
+    , userCount           :: TVar Int         -- ^ Counter for total messages received/processed.
+    , userFriends         :: TVar (Set String)-- ^ Dynamic Graph: Set of friend usernames.
+    , userSecrets         :: TVar (Set String)-- ^ Gossip State: Set of known secrets.
+    , userRatingsReceived :: TVar [Int]       -- ^ Trust System: History of ratings received from others.
+    , userPersonality     :: Personality      -- ^ The behavioral profile of this user.
+    }
+
+-- | Type alias for Message Topics (e.g., "Sports", "Haskell").
 type Topic = String
 
--- | Defines the behavior profile of a user.
-data Personality
-  = -- | Posts rarely, reads more
-    Introvert
-  | -- | Posts frequently, connects often
-    Extrovert
-  | -- | High frequency automated poster
-    Bot
-  deriving (Show, Eq)
+-- | Different categories of messages exchanged between users.
+data MessageType 
+    = Regular       -- ^ Standard chat message.
+    | FriendRequest -- ^ Request to form a connection.
+    | FriendAccept  -- ^ Confirmation of connection.
+    deriving (Show, Eq)
 
--- | Represents a simulated user in the network.
-data User = User
-  { userName :: String,
-    -- | Behavioral profile
-    userPersonality :: Personality,
-    -- | Priority 1: Friend Requests
-    userInboxUrgent :: TQueue Message,
-    -- | Priority 2: General Chat
-    userInboxNormal :: TQueue Message,
-    -- | Metric: Total messages sent
-    userMessagesSent :: TVar Int,
-    -- | Metric: Total messages received
-    userCount :: TVar Int,
-    -- | Dynamic Friend Graph
-    userFriends :: TVar (Set String),
-    -- | Known gossip secrets
-    userSecrets :: TVar (Set String),
-    -- | Trust ratings (0-10) from others
-    userRatingsReceived :: TVar [Int]
-  }
-
--- | Type of message sent between users.
-data MessageType
-  = -- | Standard chat/gossip
-    Regular
-  | -- | Urgent request to connect
-    FriendRequest
-  | -- | Confirmation of connection
-    FriendAccept
-  deriving (Show, Eq)
-
--- | The core Message payload.
+-- | Represents a message sent from one user to another.
 data Message = Message
-  { sender :: String,
-    content :: String,
-    msgType :: MessageType,
-    msgTopic :: Topic,
-    -- | Piggybacked gossip
-    msgSecrets :: [String]
-  }
-  deriving (Show, Eq)
+    { sender     :: String        -- ^ The username of the sender.
+    , content    :: String        -- ^ The textual content.
+    , msgType    :: MessageType   -- ^ Type of interaction.
+    , msgTopic   :: Topic         -- ^ Topic of the message (used for viral analysis).
+    , msgSecrets :: [String]      -- ^ Piggybacked gossip secrets (if any).
+    } deriving (Show, Eq)
