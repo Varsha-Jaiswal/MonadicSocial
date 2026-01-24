@@ -1,6 +1,6 @@
-name: monadic-social
+name: haskell-project
 version: 0.1.0.0
-github: "Varsha-Jaiswal/MonadicSocial"
+# github: "githubuser/haskell-project"
 license: BSD-3-Clause
 author: "Varsha Jaiswal"
 maintainer: "v.jaiswal@se25.qmul.ac.uk"
@@ -11,11 +11,12 @@ extra-source-files:
 
 dependencies:
   - base >= 4.7 && < 5
-  - containers
-  - stm
-  - time
-  - mtl
   - random
+  - stm
+  - async
+  - mtl
+  - time
+  - containers
   - aeson
   - bytestring
 
@@ -30,25 +31,22 @@ ghc-options:
   - -Wpartial-fields
   - -Wredundant-constraints
 
-default-extensions:
-  - ImportQualifiedPost
-  - DeriveGeneric
-
 library:
   source-dirs: src
   exposed-modules:
+    - Lib
     - Types
     - Config
     - Env
     - Logger
     - Capabilities
-    - Run
+    - AppM
     - UserBehaviour
-    - App
+    - Run
     - Reputation
 
 executables:
-  monadic-social-exe:
+  haskell-project-exe:
     main: Main.hs
     source-dirs: app
     ghc-options:
@@ -56,16 +54,4 @@ executables:
       - -rtsopts
       - -with-rtsopts=-N
     dependencies:
-      - monadic-social
-
-tests:
-  monadic-social-test:
-    main: Spec.hs
-    source-dirs: test
-    ghc-options:
-      - -threaded
-      - -rtsopts
-      - -with-rtsopts=-N
-    dependencies:
-      - monadic-social
-      - QuickCheck
+      - haskell-project

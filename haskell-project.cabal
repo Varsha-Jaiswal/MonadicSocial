@@ -28,6 +28,7 @@ library
       Run
       Reputation
   other-modules:
+      App
       Paths_haskell_project
   autogen-modules:
       Paths_haskell_project

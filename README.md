@@ -1,52 +1,72 @@
-# Monadic Social Network Simulation
+# Social Network Simulation: Individual Coursework Report
 
-A high-performance, concurrent simulation of a social network implemented in Haskell using Software Transactional Memory (STM) and modern functional design patterns.
+A concurrent, high-performance social network simulation written in Haskell.
+This project demonstrates advanced Functional Programming concepts including **STM (Software Transactional Memory)**, **AppM Architecture (ReaderT Pattern)**, **SOLID Design Principles**.
 
-## 🚀 Features
+## Features
 
-- **Concurrent Architecture**: Simulates thousands of independent user threads using `Control.Concurrent.Async`.
-- **Lock-Free State Management**: Uses **STM (Software Transactional Memory)** for thread-safe state mutations without explicit locks, ensuring consistency and preventing deadlocks.
-- **Custom Monad Stack (`AppM`)**: Leverages the **ReaderT Design Pattern** to manage dependency injection (`Env`) and custom capabilities (`MonadLog`, `MonadAtom`).
-- **Smart User Personalities**: Users exhibit different behaviors (Introvert, Extrovert, Bot) influencing their activity rate and interactions.
-- **Message Priority Queues**: Handles different message urgencies (Friend Requests vs Standard Gossip) using dedicated STM channels.
-- **Trust & Reputation System**: Dynamically calculates user reputation scores based on interaction history.
-- **Viral Trend Propagation**: Simulates the spread of "secrets" (gossip) through the network using probabilistic propagation.
-- **JSON Configuration**: Fully configurable via `config.json`.
+### 1. Hybrid Simulation Logic
 
-## 🛠️ Architecture
+Unlike simple message passers, this simulation models a complex, dynamic world:
 
-### Core Components
+- **Dynamic Friendships**: Users build a friend graph dynamically based on interactions.
+- **Gossip Protocol**: "Secrets" (strings) are piggybacked on messages and propagate through the network.
+- **Viral Trends**: A global "Topic Trend" tracker influences user behavior. If a topic goes viral, users indiscriminately friend the sender.
 
-- **`Main.hs`**: Entry point that loads configuration and initializes the `AppM` runner.
-- **`Run.hs`**: Orchestration layer. Spawns user threads and runs the central monitoring loop.
-- **`UserBehaviour.hs`**: Defines the logic for individual user agents. Handles probabilistic decision-making (sending messages, sleeping) and mailbox processing.
-- **`Types.hs`**: Centralizes domain types (`User`, `Message`, `Personality`) and STM data structures (`TQueue`, `TVar`).
-- **`Env.hs`**: Defines the runtime environment and global application state.
-- **`Capabilities.hs`**: Defines `mtl`-style typeclasses (`MonadAtom`, `MonadLog`) to abstract over side effects, enabling better testing and flexibility.
-- **`Reputation.hs`**: Pure functions for calculating trust scores.
+### 2. Key Extensions
 
-### Key Concepts
+To demonstrate advanced STM usage and functional design:
 
-- **STM**: We use `TVar` for shared variables (like message counters) and `TQueue` for message passing channels. This allows atomic transactions across multiple state variables.
-- **AppM Monad**: `type AppM = ReaderT Env IO`. This stack simplifies passing configuration and global state to all functions.
+- **Trust System**: A pure functional implementation (`Reputation.hs`) that calculates influence scores based on interaction ratings.
+- **Priority Queues**: Friend requests bypass the normal queue. The `processInbox` logic uses STM's `orElse` to check the urgent channel first.
+- **User Personalities**: Users are randomly assigned as Introverts, Extroverts, or Bots, each with different waiting times and probabilities of initiating chat.
 
-## ⚡ Quick Start
+### 3. Architecture & Patterns
 
-1.  **Build the project**:
+The codebase follows **SOLID principles** using the **Dependency Inversion Principle**:
 
-    ```bash
-    stack build
-    ```
+- **Capabilities Pattern**: Logic relies on abstract typeclasses (`MonadAtom`, `MonadLog`) rather than concrete IO, making the core testable.
+- **ReaderT Pattern**: The application runs in a custom `AppM` monad stack carrying the read-only environment.
 
-2.  **Run the simulation**:
+### 4. Technical Highlights
 
-    ```bash
-    stack run
-    ```
+- **JSON Configuration**: Start-up parameters are parsed safely using `Aeson`.
+- **Property-Based Testing**: `QuickCheck` is used to verify graph invariants.
+- **Thread-Safe Logging**: A dedicated logger handles output without race conditions.
 
-    _Modify `config.json` to tune the simulation parameters (number of messages, delays, etc)._
+## Project Structure
 
-3.  **Run Tests**:
-    ```bash
-    stack test
-    ```
+```
+app/Main.hs             # Entry point
+config.json             # Runtime configuration
+src/AppM.hs             # Concrete Monad Impl
+src/Capabilities.hs     # Abstract Interfaces
+src/Config.hs           # JSON Parsing
+src/Env.hs              # Global State Definition
+src/Logger.hs           # Thread-safe Logging
+src/Run.hs              # Simulation Orchestration
+src/Types.hs            # Data Structures
+src/UserBehaviour.hs    # Core Logic
+```
+
+## How to Build & Run
+
+### Remove the chat.log file if it exists
+
+```bash
+rm chat.log
+```
+
+### Build Project
+
+```bash
+stack build
+```
+
+### Run Simulation
+
+```bash
+stack run
+```
+
+_Note: The simulation will terminate automatically when the message limit (defined in `config.json`) is reached._
