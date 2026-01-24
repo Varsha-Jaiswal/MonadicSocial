@@ -1,0 +1,8 @@
+{
+    "minMessages": 20,
+    "maxMessages": 100,
+    "minDelay": 100000,
+    "maxDelay": 500000,
+    "initialSecret": "Functional Programming is Awesome",
+    "viralThreshold": 5
+}

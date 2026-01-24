@@ -10,6 +10,7 @@ import Control.Concurrent.STM (STM)
 -- Allows mocking or different implementations (Stdout vs File).
 class (Monad m) => MonadLog m where
   logInfo :: String -> m ()
+  logChat :: String -> String -> String -> m ()
 
 -- | Capability for atomic STM operations.
 -- Allows abstraction over raw 'atomically'.
