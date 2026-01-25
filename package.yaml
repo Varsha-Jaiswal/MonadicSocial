@@ -1,6 +1,6 @@
-name: haskell-project
+name: monadic-social
 version: 0.1.0.0
-# github: "githubuser/haskell-project"
+# github: "Varsha-Jaiswal/monadic-social"
 license: BSD-3-Clause
 author: "Varsha Jaiswal"
 maintainer: "v.jaiswal@se25.qmul.ac.uk"
@@ -46,7 +46,7 @@ library:
     - Reputation
 
 executables:
-  haskell-project-exe:
+  monadic-social-exe:
     main: Main.hs
     source-dirs: app
     ghc-options:
@@ -54,4 +54,16 @@ executables:
       - -rtsopts
       - -with-rtsopts=-N
     dependencies:
-      - haskell-project
+      - monadic-social
+
+tests:
+  monadic-social-test:
+    main: Spec.hs
+    source-dirs: test
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
+    dependencies:
+      - monadic-social
+      - QuickCheck
