@@ -42,6 +42,8 @@ library:
     - Capabilities
     - AppM
     - UserBehaviour
+    - ContentStrategy
+    - PersonalityStrategy
     - Run
     - Reputation
 
